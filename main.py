@@ -28,8 +28,6 @@ av_params = {
 
 na_params = {
     "apiKey": NEWS_API_APIKEY,
-    "country": "us",
-    "category": "business",
     "q": COMPANY_NAME
 }
 response1 = requests.get(url=AV_ENDPOINT, params=av_params)
@@ -50,15 +48,14 @@ if rate_of_change >= 5 or rate_of_change <= -5:
 
     news_response = requests.get(url=NA_ENDPOINT, params=na_params)
     news_articles = news_response.json()
-
-    x = news_articles["articles"][0]["title"]
-    print(x)
-
-    client = Client(ACCOUNT_SID, AUTH_TOKEN)
-    message = client.messages \
-        .create(
-        body=f"{STOCK} has changed by {rate_of_change}. NEWS is {x}",
-        from_=SENDING_NUMBER,
-        to=RECEIVING_NUMBER
-    )
-    print(message.sid)
+    count = 0
+    while count < 3:
+        x = news_articles["articles"][count]["title"]
+        client = Client(ACCOUNT_SID, AUTH_TOKEN)
+        message = client.messages \
+            .create(
+            body=f"{STOCK} has changed by {rate_of_change}%. NEWS is {x}",
+            from_=SENDING_NUMBER,
+            to=RECEIVING_NUMBER
+        )
+        count += 1
